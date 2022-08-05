@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        font-size: 20px;
+        font-family: sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        min-height: 100vh;
+      }
+
+      main {
+        border: 1px solid black;
+        padding: 2em;
+        height: 40vh;
+        width: 30em;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      h1 {
+        font-size: 3em;
+        margin-bottom: 0.5em;
+      }
+
+      label {
+        margin-bottom: 5px;
+        font-size: 1.2em;
+      }
+
+      .real input {
+        width: 8em;
+        height: 1em;
+        padding: 0.1em 0.2em;
+        font-weight: 700;
+        font-size: 1.5em;
+        border: none;
+      }
+
+      .real input:focus {
+        box-shadow: 0 0 0 0;
+        outline: 0;
+      }
+
+      button {
+        border: none;
+        border: 2px solid black;
+        background-color: white;
+        transition: 0.3s;
+      }
+      button:hover {
+        background-color: black;
+        color: white;
+        transition: 0.3s;
+      }
+      input {
+        width: 8em;
+        padding: 0.1em 0.2em;
+        font-weight: 700;
+        font-size: 1.5em;
+        text-align: right;
+      }
+      p {
+        margin-bottom: 1em;
+      }
+
+      p,
+      .real {
+        font-weight: 700;
+      }
+      .real {
+        width: 16em;
+        height: 2em;
+        border: 1px solid black;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        margin-bottom: 1em;
+      }
+
+      .real-p {
+        margin-right: 5px;
+        margin-bottom: 0;
+      }
+
+      button {
+        margin: 1em 0;
+        padding: 0.5em;
+        border-radius: 2em;
+        font-weight: bold;
+      }
+
+      .caixa {
+        position: absolute;
+        left: 31.5em;
+        bottom: 11.7em;
+        border: none;
+        transition: 0.3s;
+        background-color: white;
+      }
+
+      .caixa:hover {
+        color: white;
+        transition: 0.3s;
+      }
+
+      .telaCaixa {
+        position: absolute;
+        top: 40%;
+        left: 40%;
+        background-color: gray;
+        width: 6em;
+        height: 3em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 3em;
+        color: white;
+        font-weight: bold;
+        transition: 0.3s;
+        padding: 0;
+      }
+
+      .btnClose {
+        position: absolute;
+        width: 2em;
+        top: -1em;
+        right: 0;
+        font-weight: bold;
+        color: white;
+        border: none;
+        background-color: transparent;
+        border-radius: 0;
+      }
+
+      .btnClose:hover {
+        background-color: red;
+      }
+
+      @media (max-width: 450px) {
+        main {
+          width: 100%;
+          height: 50vh;
+          border: none;
+        }
+
+        .caixa {
+          left: 5px;
+          bottom: 9em;
+        }
+
+        .telaCaixa {
+          top: 40%;
+          left: 7%;
+        }
+
+        h1 {
+          font-size: 2.2em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Lojas Tabajaras</h1>
+      <label for="precos">Informe o preço:</label>
+      <div class="real">
+        <p class="real-p">R$:</p>
+        <input type="text" id="precos" />
+      </div>
+
+      <button class="caixa">Caixa</button>
+    </main>
+    <script>
+      let main = document.querySelector("main");
+      let body = document.querySelector("body");
+      let input = document.querySelector("input");
+      let precos = [];
+      let soma = 0;
+      let troco;
+      let dinheiro;
+      let totalAPg;
+      let caixa = 150;
+      let btnCaixa = document.querySelector(".caixa");
+      let telaCaixa;
+      let closeCaixa;
+      let res;
+      let reset;
+
+      body.onload = () => {
+        input.focus();
+      };
+
+      btnCaixa.addEventListener("click", verCaixa);
+
+      function verCaixa() {
+        telaCaixa = document.createElement("div");
+        telaCaixa.setAttribute("class", "telaCaixa");
+        body.appendChild(telaCaixa);
+        telaCaixa.textContent = `R$ ${caixa}`;
+
+        closeCaixa = document.createElement("button");
+        closeCaixa.textContent = "x";
+        closeCaixa.setAttribute("class", "btnClose");
+        closeCaixa.addEventListener("click", fecharCaixa);
+        telaCaixa.appendChild(closeCaixa);
+
+        function fecharCaixa() {
+          body.removeChild(telaCaixa);
+        }
+      }
+
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          total();
+        }
+      });
+
+      function total() {
+        precos.push(Number(input.value));
+
+        if (Number(input.value) === 0) {
+          input.value = "";
+          input.disabled = true;
+
+          for (let i = 0; i < precos.length; i++) {
+            soma += precos[i];
+          }
+
+          totalAPg = document.createElement("p");
+          totalAPg.textContent = `Total a pagar: R$ ${soma}`;
+          main.appendChild(totalAPg);
+
+          dinheiro = document.createElement("input");
+          main.appendChild(dinheiro);
+          dinheiro.setAttribute("placeholder", "Valor pago");
+          dinheiro.focus();
+
+          dinheiro.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+              calculaTroco();
+            }
+          });
+        }
+        input.value = "";
+      }
+
+      function calculaTroco() {
+        caixa += Number(dinheiro.value);
+        if (Number(dinheiro.value) === 0) {
+          dinheiro.setAttribute("placeholder", "Insira um valor");
+        } else {
+          troco = Number(dinheiro.value) - soma;
+          caixa = caixa - troco;
+          dinheiro.parentNode.removeChild(dinheiro);
+
+          res = document.createElement("p");
+          res.textContent = `O valor do troco é: R$ ${troco}`;
+          main.appendChild(res);
+
+          reset = document.createElement("button");
+          reset.textContent = "Nova compra";
+          main.appendChild(reset);
+          reset.addEventListener("click", resetar);
+        }
+      }
+
+      function resetar() {
+        precos = [];
+        soma = 0;
+        res.parentNode.removeChild(res);
+        totalAPg.parentNode.removeChild(totalAPg);
+        input.disabled = false;
+        reset.parentNode.removeChild(reset);
+      }
+    </script>
+  </body>
+</html>
